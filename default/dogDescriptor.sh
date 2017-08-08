@@ -14,7 +14,12 @@ app="$8/dogDescriptor"
 mcrRoot=$9
 
 # Should be a standard project argument
-log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
+if [ "$(uname)" == "Darwin" ]
+then
+	log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
+else
+	log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
+fi
 
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-prob.0.h5"
