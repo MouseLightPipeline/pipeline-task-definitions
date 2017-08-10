@@ -28,6 +28,8 @@ log_file_base=${tile_relative_path//\//-}
 log_file_prefix="ax-"
 log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
 log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
+err_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.err"
+err_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.err"
 
 output_format="hdf5"
 
@@ -84,7 +86,7 @@ else
 
     cluster_exports="export LAZYFLOW_THREADS=${LAZYFLOW_THREADS}; export LAZYFLOW_TOTAL_RAM_MB=${LAZYFLOW_TOTAL_RAM_MB}; LD_LIBRARY_PATH=\"\"; PYTHONPATH=\"\"; QT_PLUGIN_PATH=${IL_PREFIX}/plugins"
 
-    ssh login1 "source /etc/profile; ${cluster_exports}; qsub -sync y -pe batch 4 -N ml-ax-${tile_name} -j y -o /dev/null -b y -cwd -V -l d_rt=3600 -l broadwell=true '${cmd1}'"
+    ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
     result=$?
 
@@ -96,7 +98,7 @@ else
       exit ${result}
     fi
 
-    ssh login1 "source /etc/profile; ${cluster_exports}; qsub -sync y -pe batch 4 -N ml-ax-${tile_name} -j y -o /dev/null -b y -cwd -V -l d_rt=3600 -l broadwell=true '${cmd2}'"
+    ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
     result=$?
 

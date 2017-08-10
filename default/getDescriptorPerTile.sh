@@ -16,9 +16,9 @@ mcrRoot=$9
 # Should be a standard project argument
 if [ "$(uname)" == "Darwin" ]
 then
-	log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
+    log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
 else
-	log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
+    log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
 fi
 
 # Compile derivatives
@@ -30,7 +30,8 @@ output_file+="-desc.mat"
 
 log_file_base=${tile_relative_path//\//-}
 log_file_prefix="gd-"
-log_file="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
+log_file="${log_path_base}/${log_file_prefix}${log_file_base}.txt"
+err_file="${log_path_base}/${log_file_prefix}${log_file_base}.err"
 
 LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
@@ -54,7 +55,7 @@ then
       exit $?
     fi
 else
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; qsub -sync y -pe batch 1 -N ml-${tile_name} -j y -o ${log_file} -b y -cwd -V -l d_rt=3600 -l broadwell=true '${cmd}'"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
     if [ $? -eq 0 ]
     then
       echo "Completed descriptor merge (cluster)."

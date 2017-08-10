@@ -16,9 +16,9 @@ mcrRoot=$9
 # Should be a standard project argument
 if [ "$(uname)" == "Darwin" ]
 then
-	log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
+    log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
 else
-	log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
+    log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
 fi
 
 # Compile derivatives
@@ -34,6 +34,8 @@ log_file_base=${tile_relative_path//\//-}
 log_file_prefix="dg-"
 log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
 log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
+err_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.err"
+err_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.err"
 
 LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
@@ -68,7 +70,7 @@ then
       exit $?
     fi
 else
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; qsub -sync y -pe batch 1 -N ml-dg-${tile_name} -j y -o ${log_file_1} -b y -cwd -V -l d_rt=3600 -l broadwell=true '${cmd1}'"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
     if [ $? -eq 0 ]
     then
       echo "Completed descriptor for channel 0 (cluster)."
@@ -77,7 +79,7 @@ else
       exit $?
     fi
 
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; qsub -sync y -pe batch 1 -N ml-dg-${tile_name} -j y -o ${log_file_2} -b y -cwd -V -l d_rt=3600 -l broadwell=true '${cmd2}'"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
     if [ $? -eq 0 ]
     then
       echo "Completed descriptor for channel 1 (cluster)."
