@@ -24,6 +24,10 @@ output_file+="-prob"
 output_file1="$output_file.0.h5"
 output_file2="$output_file.1.h5"
 
+log_path_base="${log_path_base}/${project_name}/$tile_relative_path"
+
+mkdir -p ${log_path_base}
+
 log_file_base=${tile_relative_path//\//-}
 log_file_prefix="ax-"
 log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
