@@ -14,6 +14,7 @@ ilastik_project="$8/axon_uint16.ilp"
 
 # Should be a standard project argument
 log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
+log_path_base="${log_path_base}/${project_name}/${tile_relative_path}"
 
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.0.tif"
@@ -26,8 +27,14 @@ output_file2="$output_file.1.h5"
 
 log_file_base=${tile_relative_path//\//-}
 log_file_prefix="ax-"
-log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
-log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
+# log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
+# log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
+
+# create hidden log folder
+mkdir -p "$pipeline_output_root/$tile_relative_path/.log/"
+log_file_1="$pipeline_output_root/$tile_relative_path/.log/$tile_name-log.0.txt"
+log_file_2="$pipeline_output_root/$tile_relative_path/.log/$tile_name-log.1.txt"
+
 err_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.err"
 err_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.err"
 
