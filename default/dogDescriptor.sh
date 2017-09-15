@@ -7,11 +7,13 @@ pipeline_input_root=$3
 pipeline_output_root=$4
 tile_relative_path=$5
 tile_name=$6
-is_cluster_job=$7
+log_root_path=$7
+expected_exit_code=$8
+is_cluster_job=$9
 
 # Custom task arguments defined by task definition
-app="$8/dogDescriptor"
-mcrRoot=$9
+app="${10}/dogDescriptor"
+mcrRoot=${11}
 
 # Should be a standard project argument
 if [ "$(uname)" == "Darwin" ]
@@ -52,7 +54,7 @@ then
 
     eval ${cmd1} &> ${log_file_1}
 
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 0."
     else
@@ -61,7 +63,7 @@ then
     fi
 
     eval ${cmd2} &> ${log_file_2}
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 1."
       exit 0
@@ -71,7 +73,7 @@ then
     fi
 else
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 0 (cluster)."
     else
@@ -80,7 +82,7 @@ else
     fi
 
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 1 (cluster)."
       exit 0

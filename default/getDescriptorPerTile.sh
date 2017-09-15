@@ -7,11 +7,13 @@ pipeline_input_root=$3
 pipeline_output_root=$4
 tile_relative_path=$5
 tile_name=$6
-is_cluster_job=$7
+log_root_path=$7
+expected_exit_code=$8
+is_cluster_job=$9
 
 # Custom task arguments defined by task definition
-app="$8/getDescriptorPerTile15b"
-mcrRoot=$9
+app="${10}/getDescriptorPerTile15b"
+mcrRoot=${11}
 
 # Should be a standard project argument
 if [ "$(uname)" == "Darwin" ]
@@ -46,7 +48,7 @@ then
 
     eval ${cmd} &> ${log_file}
 
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor merge."
       exit 0
@@ -56,7 +58,7 @@ then
     fi
 else
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
-    if [ $? -eq 0 ]
+    if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor merge (cluster)."
       exit 0

@@ -6,8 +6,14 @@ pipeline_input_root=$3
 pipeline_output_root=$4
 tile_relative_path=$5
 tile_name=$6
-is_cluster_job=$7
-ilastik_project="$8/PixelTest.ilp"
+log_root_path=$7
+expected_exit_code=$8
+is_cluster_job=$9
+ilastik_project="${10}/PixelTest.ilp"
+
+echo ${log_root_path}
+echo ${expected_exit_code}
+echo ${ilastik_project}
 
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.0.tif"
 input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.1.tif"
@@ -15,7 +21,7 @@ output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
 output_file+="-prob"
 output_file1="$output_file.0.h5"
 output_file2="$output_file.1.h5"
-log_file="$8/testing.log"
+log_file="${10}/testing.log"
 
 # Default location on test machines.  Most configurations should export IL_PREFIX in their launch script that also sets
 # machine id, etc.
@@ -55,7 +61,7 @@ eval ${cmd1}
 
 result=$?
 
-if [ ${result} -eq 0 ]
+if [ ${result} -eq ${expected_exit_code} ]
 then
   echo "Completed classifier for channel 0."
 else
@@ -67,7 +73,7 @@ eval ${cmd2}
 
 result=$?
 
-if [ ${result} -eq 0 ]
+if [ ${result} -eq ${expected_exit_code} ]
 then
   echo "Completed classifier for channel 1."
   exit 0

@@ -7,10 +7,12 @@ pipeline_input_root=$3
 pipeline_output_root=$4
 tile_relative_path=$5
 tile_name=$6
-is_cluster_job=$7
+log_root_path=$7
+expected_exit_code=$8
+is_cluster_job=$9
 
 # Custom task arguments defined by task definition
-ilastik_project="$8/axon_uint16.ilp"
+ilastik_project="${10}/axon_uint16.ilp"
 
 # Should be a standard project argument
 log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
@@ -71,7 +73,7 @@ then
 
     result=$?
 
-    if [ ${result} -eq 0 ]
+    if [ ${result} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 0."
     else
@@ -81,9 +83,12 @@ then
 
     eval ${cmd2}
 
+    # Note - you could just return $? or ${result}.  Here we are doing the comparison just to log an additional message
+    # message for diagnostics purposes.  However all that matters for the pipeline manager is what value is returned from
+    # this script via the exit command.
     result=$?
 
-    if [ ${result} -eq 0 ]
+    if [ ${result} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 1."
       exit 0
@@ -101,7 +106,7 @@ else
 
     result=$?
 
-    if [ ${result} -eq 0 ]
+    if [ ${result} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 0 (cluster)."
     else
@@ -113,7 +118,7 @@ else
 
     result=$?
 
-    if [ ${result} -eq 0 ]
+    if [ ${result} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 1 (cluster)."
       exit 0
