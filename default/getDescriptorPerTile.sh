@@ -32,8 +32,7 @@ mkdir -p ${log_path_base}
 chmod ug+rwx ${log_path_base}
 chmod o+rx ${log_path_base}
 
-log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
-log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
+log_file="${log_path_base}/${log_file_base}-log.txt"
 
 LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
