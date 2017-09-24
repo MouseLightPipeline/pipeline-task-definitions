@@ -14,10 +14,6 @@ is_cluster_job=$9
 # Custom task arguments defined by task definition
 ilastik_project="${10}/axon_uint16.ilp"
 
-# Should be a standard project argument
-log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
-log_path_base="${log_path_base}/${project_name}/${tile_relative_path}"
-
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.0.tif"
 input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.1.tif"
@@ -27,22 +23,13 @@ output_file+="-prob"
 output_file1="$output_file.0.h5"
 output_file2="$output_file.1.h5"
 
-log_path_base="${log_path_base}/${project_name}/$tile_relative_path"
+log_path_base="$pipeline_output_root/$tile_relative_path/.log"
+log_file_base="ax-${tile_name}"
 
+# Create hidden log folder
 mkdir -p ${log_path_base}
-
-log_file_base=${tile_relative_path//\//-}
-log_file_prefix="ax-"
-# log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
-# log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
-
-# create hidden log folder
-mkdir -p "$pipeline_output_root/$tile_relative_path/.log/"
-log_file_1="$pipeline_output_root/$tile_relative_path/.log/$tile_name-log.0.txt"
-log_file_2="$pipeline_output_root/$tile_relative_path/.log/$tile_name-log.1.txt"
-
-err_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.err"
-err_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.err"
+log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
+log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
 
 output_format="hdf5"
 
@@ -102,6 +89,8 @@ else
 
     cluster_exports="export LAZYFLOW_THREADS=${LAZYFLOW_THREADS}; export LAZYFLOW_TOTAL_RAM_MB=${LAZYFLOW_TOTAL_RAM_MB}; LD_LIBRARY_PATH=\"\"; PYTHONPATH=\"\"; QT_PLUGIN_PATH=${IL_PREFIX}/plugins"
 
+    err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
+
     ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
     result=$?
@@ -113,6 +102,8 @@ else
       echo "Failed classifier for channel 0 (cluster)."
       exit ${result}
     fi
+
+    err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
 
     ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
