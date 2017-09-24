@@ -74,6 +74,11 @@ else
 
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
+    if [ -e ${output_file1} ]
+    then
+      chmod 755 ${output_file1}
+    fi
+
     if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 0 (cluster)."
@@ -85,6 +90,11 @@ else
     err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
 
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
+
+    if [ -e ${output_file2} ]
+    then
+      chmod 755 ${output_file2}
+    fi
 
     if [ $? -eq ${expected_exit_code} ]
     then
