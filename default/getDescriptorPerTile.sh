@@ -47,9 +47,9 @@ then
 
     eval ${cmd} &> ${log_file}
 
-    if [ -e ${output_file1} ]
+    if [ -e ${output_file} ]
     then
-      chmod 775 ${output_file1}
+      chmod 775 ${output_file}
     fi
 
     if [ -e ${log_file} ]
