@@ -28,6 +28,11 @@ log_file_base="ax-${tile_name}"
 
 # Create hidden log folder
 mkdir -p ${log_path_base}
+
+# Make sure group can read/write.
+chmod ug+rwx ${log_path_base}
+chmod o+rx ${log_path_base}
+
 log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
 log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
 
