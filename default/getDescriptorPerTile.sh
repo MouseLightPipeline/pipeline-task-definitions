@@ -47,6 +47,16 @@ then
 
     eval ${cmd} &> ${log_file}
 
+    if [ -e ${output_file1} ]
+    then
+      chmod 755 ${output_file1}
+    fi
+
+    if [ -e ${log_file} ]
+    then
+      chmod 755 ${log_file}
+    fi
+
     if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor merge."
