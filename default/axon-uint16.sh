@@ -20,8 +20,8 @@ input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.1.tif"
 
 output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
 output_file+="-prob"
-output_file1="$output_file.0.h5"
-output_file2="$output_file.1.h5"
+output_file_1="$output_file.0.h5"
+output_file_2="$output_file.1.h5"
 
 log_path_base="$pipeline_output_root/$tile_relative_path/.log"
 log_file_base="ax-${tile_name}"
@@ -49,8 +49,8 @@ then
   fi
 fi
 
-cmd1="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --logfile=${log_file_1} --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file1}\" --output_format=\"${output_format}\" \"$input_file1\""
-cmd2="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --logfile=${log_file_2} --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file2}\" --output_format=\"${output_format}\" \"$input_file2\""
+cmd1="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --logfile=${log_file_1} --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file_1}\" --output_format=\"${output_format}\" \"$input_file1\""
+cmd2="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --logfile=${log_file_2} --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file_2}\" --output_format=\"${output_format}\" \"$input_file2\""
 
 if [ ${is_cluster_job} -eq 0 ]
 then
@@ -61,65 +61,107 @@ then
     export LAZYFLOW_THREADS=18
     export LAZYFLOW_TOTAL_RAM_MB=200000
 
+    # Channel 0
     eval ${cmd1}
 
-    result=$?
+    # Store before the next calls change the value.
+    exit_code=$?
 
-    if [ ${result} -eq ${expected_exit_code} ]
+    if [ -e ${output_file_1} ]
+    then
+        chmod 775 ${output_file_1}
+    fi
+
+    if [ -e ${log_file_1} ]
+    then
+        chmod 775 ${log_file_1}
+    fi
+
+    if [ ${exit_code} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 0."
     else
       echo "Failed classifier for channel 0."
-      exit ${result}
+      exit ${exit_code}
     fi
 
+    # Channel 1
     eval ${cmd2}
 
-    # Note - you could just return $? or ${result}.  Here we are doing the comparison just to log an additional message
-    # message for diagnostics purposes.  However all that matters for the pipeline manager is what value is returned from
-    # this script via the exit command.
-    result=$?
+    exit_code=$?
 
-    if [ ${result} -eq ${expected_exit_code} ]
+    if [ -e ${output_file_2} ]
+    then
+        chmod 775 ${output_file_2}
+    fi
+
+    if [ -e ${log_file_2} ]
+    then
+        chmod 775 ${log_file_2}
+    fi
+
+    if [ ${exit_code} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 1."
-      exit 0
     else
       echo "Failed classifier for channel 1."
-      exit ${result}
     fi
+
+    exit ${exit_code}
 else
     LAZYFLOW_THREADS=4
     LAZYFLOW_TOTAL_RAM_MB=60000
 
     cluster_exports="export LAZYFLOW_THREADS=${LAZYFLOW_THREADS}; export LAZYFLOW_TOTAL_RAM_MB=${LAZYFLOW_TOTAL_RAM_MB}; LD_LIBRARY_PATH=\"\"; PYTHONPATH=\"\"; QT_PLUGIN_PATH=${IL_PREFIX}/plugins"
 
+    # Channel 0
     err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
 
     ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
-    result=$?
+    exit_code=$?
 
-    if [ ${result} -eq ${expected_exit_code} ]
+    if [ -e ${output_file_1} ]
+    then
+        chmod 775 ${output_file_1}
+    fi
+
+    if [ -e ${log_file_1} ]
+    then
+        chmod 775 ${log_file_1}
+    fi
+
+    if [ ${exit_code} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 0 (cluster)."
     else
       echo "Failed classifier for channel 0 (cluster)."
-      exit ${result}
+      exit ${exit_code}
     fi
 
+    # Channel 1
     err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
 
     ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
-    result=$?
+    exit_code=$?
 
-    if [ ${result} -eq ${expected_exit_code} ]
+    if [ -e ${output_file_2} ]
+    then
+        chmod 775 ${output_file_2}
+    fi
+
+    if [ -e ${log_file_2} ]
+    then
+        chmod 775 ${log_file_2}
+    fi
+
+    if [ ${exit_code} -eq ${expected_exit_code} ]
     then
       echo "Completed classifier for channel 1 (cluster)."
-      exit 0
     else
       echo "Failed classifier for channel 1 (cluster)."
-      exit ${result}
     fi
+
+    exit ${exit_code}
 fi

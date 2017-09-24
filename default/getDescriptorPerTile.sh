@@ -46,36 +46,30 @@ then
     export LD_LIBRARY_PATH;
 
     eval ${cmd} &> ${log_file}
-
-    if [ -e ${output_file} ]
-    then
-      chmod 775 ${output_file}
-    fi
-
-    if [ -e ${log_file} ]
-    then
-      chmod 775 ${log_file}
-    fi
-
-    if [ $? -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor merge."
-      exit 0
-    else
-      echo "Failed descriptor merge."
-      exit $?
-    fi
 else
     err_file="${log_path_base}/${log_file_base}.cluster.err"
 
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
-
-    if [ $? -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor merge (cluster)."
-      exit 0
-    else
-      echo "Failed descriptor merge (cluster)."
-      exit $?
-    fi
 fi
+
+# Store before the next calls change the value.
+exit_code=$?
+
+if [ -e ${output_file} ]
+then
+    chmod 775 ${output_file}
+fi
+
+if [ -e ${log_file} ]
+then
+    chmod 775 ${log_file}
+fi
+
+if [ ${exit_code} -eq ${expected_exit_code} ]
+then
+    echo "Completed descriptor merge."
+else
+    echo "Failed descriptor merge."
+fi
+
+exit ${exit_code}
