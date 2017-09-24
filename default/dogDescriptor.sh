@@ -15,14 +15,6 @@ is_cluster_job=$9
 app="${10}/dogDescriptor"
 mcrRoot=${11}
 
-# Should be a standard project argument
-if [ "$(uname)" == "Darwin" ]
-then
-    log_path_base="/Volumes/Spare/Projects/MouseLight/LOG/pipeline"
-else
-    log_path_base="/groups/mousebrainmicro/mousebrainmicro/LOG/pipeline"
-fi
-
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-prob.0.h5"
 input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-prob.1.h5"
@@ -32,12 +24,18 @@ output_file+="-desc"
 output_file1="$output_file.0.txt"
 output_file2="$output_file.1.txt"
 
-log_file_base=${tile_relative_path//\//-}
-log_file_prefix="dg-"
-log_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.txt"
-log_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.txt"
-err_file_1="${log_path_base}/${log_file_prefix}${log_file_base}.0.err"
-err_file_2="${log_path_base}/${log_file_prefix}${log_file_base}.1.err"
+log_path_base="$pipeline_output_root/$tile_relative_path/.log"
+log_file_base="dd-${tile_name}"
+
+# Create hidden log folder
+mkdir -p ${log_path_base}
+
+# Make sure group can read/write.
+chmod ug+rwx ${log_path_base}
+chmod o+rx ${log_path_base}
+
+log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
+log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
 
 LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
@@ -72,7 +70,10 @@ then
       exit $?
     fi
 else
+    err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
+
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+
     if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 0 (cluster)."
@@ -81,7 +82,10 @@ else
       exit $?
     fi
 
+    err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
+
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
+
     if [ $? -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 1 (cluster)."
