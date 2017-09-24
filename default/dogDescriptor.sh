@@ -115,6 +115,11 @@ else
         chmod 775 ${log_file_1}
     fi
 
+    if [ -e ${err_file_1} ]
+    then
+        chmod 775 ${err_file_1}
+    fi
+
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
       echo "Completed descriptor for channel 0 (cluster)."
@@ -138,6 +143,11 @@ else
     if [ -e ${log_file_2} ]
     then
         chmod 775 ${log_file_2}
+    fi
+
+    if [ -e ${err_file_2} ]
+    then
+        chmod 775 ${err_file_2}
     fi
 
     if [ ${exit_code} -eq ${expected_exit_code} ]

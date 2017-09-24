@@ -41,14 +41,14 @@ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
 cmd="${app} ${input_file1} ${input_file2} ${output_file}"
 
+err_file="${log_path_base}/${log_file_base}.cluster.err"
+
 if [ ${is_cluster_job} -eq 0 ]
 then
     export LD_LIBRARY_PATH;
 
     eval ${cmd} &> ${log_file}
 else
-    err_file="${log_path_base}/${log_file_base}.cluster.err"
-
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
 fi
 
@@ -63,6 +63,11 @@ fi
 if [ -e ${log_file} ]
 then
     chmod 775 ${log_file}
+fi
+
+if [ -e ${err_file} ]
+then
+    chmod 775 ${err_file}
 fi
 
 if [ ${exit_code} -eq ${expected_exit_code} ]
