@@ -47,6 +47,8 @@ if [ ${is_cluster_job} -eq 0 ]
 then
     export LD_LIBRARY_PATH;
 
+    export MCR_CACHE="~/";
+
     eval ${cmd} &> ${log_file}
 else
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
