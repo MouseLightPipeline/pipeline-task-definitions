@@ -47,7 +47,7 @@ if [ ${is_cluster_job} -eq 0 ]
 then
     export LD_LIBRARY_PATH;
 
-    export MCR_CACHE="~/";
+    export MCR_CACHE_ROOT="~/";
 
     eval ${cmd} &> ${log_file}
 else
