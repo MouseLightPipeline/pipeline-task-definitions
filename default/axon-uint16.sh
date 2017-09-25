@@ -136,7 +136,12 @@ else
 
     if [ -e ${err_file_1} ]
     then
-        chmod 775 ${err_file_1}
+        if [ ! -s ${err_file_1} ]
+        then
+            rm ${err_file_1}
+        else
+            chmod 775 ${err_file_1}
+        fi
     fi
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
@@ -168,7 +173,12 @@ else
 
     if [ -e ${err_file_2} ]
     then
-        chmod 775 ${err_file_2}
+        if [ ! -s ${err_file_2} ]
+        then
+            rm ${err_file_2}
+        else
+            chmod 775 ${err_file_2}
+        fi
     fi
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
