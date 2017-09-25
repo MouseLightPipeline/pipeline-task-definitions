@@ -55,6 +55,8 @@ fi
 # Store before the next calls change the value.
 exit_code=$?
 
+sleep 2s
+
 if [ -e ${output_file} ]
 then
     chmod 775 ${output_file}
