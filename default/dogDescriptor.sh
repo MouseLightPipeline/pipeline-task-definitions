@@ -105,7 +105,10 @@ else
 
     export MCR_CACHE_ROOT="~/";
 
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+    echo ${LD_LIBRARY_PATH}
+    echo "start"
+    ssh login1 "echo \"ssh complete\"; source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+    echo "stop"
 
     exit_code=$?
 
