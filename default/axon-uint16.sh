@@ -121,6 +121,9 @@ else
 
     exit_code=$?
 
+    #  Allows any files to flush, particularly cluster error file
+    sleep 2s
+
     if [ -e ${output_file_1} ]
     then
         chmod 775 ${output_file_1}
@@ -150,6 +153,8 @@ else
     ssh login1 "source /etc/profile; ${cluster_exports}; bsub -K -n 4 -J ml-ax-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
     exit_code=$?
+
+    sleep 2s
 
     if [ -e ${output_file_2} ]
     then

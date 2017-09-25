@@ -105,6 +105,8 @@ else
 
     exit_code=$?
 
+    sleep 2s
+
     if [ -e ${output_file_1} ]
     then
         chmod 775 ${output_file_1}
@@ -134,6 +136,8 @@ else
     ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
     exit_code=$?
+
+    sleep 2s
 
     if [ -e ${output_file_2} ]
     then
