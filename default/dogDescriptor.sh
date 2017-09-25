@@ -37,18 +37,18 @@ chmod o+rx ${log_path_base}
 log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
 log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
 
+LD_LIBRARY_PATH2=.:${mcrRoot}/runtime/glnxa64 ;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/opengl/lib/glnxa64;
+
 cmd1="${app} ${input_file1} ${output_file_1} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
 cmd2="${app} ${input_file2} ${output_file_2} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
 if [ ${is_cluster_job} -eq 0 ]
 then
-    LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
-    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
-    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
-    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
-
-    export LD_LIBRARY_PATH;
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
 
     export MCR_CACHE_ROOT="~/";
 
@@ -100,10 +100,12 @@ then
 
     exit ${exit_code}
 else
+    export MCR_CACHE_ROOT="~/";
+
    # Channel 0
     err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
 
-    ssh login1 "echo \"ssh complete\"; source /etc/profile; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+    ssh login1 "echo \"ssh complete\"; source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
     exit_code=$?
 
@@ -140,7 +142,7 @@ else
    # Channel 1
     err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
 
-    ssh login1 "source /etc/profile; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
 
     exit_code=$?
 
