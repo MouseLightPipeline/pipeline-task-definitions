@@ -67,7 +67,12 @@ fi
 
 if [ -e ${err_file} ]
 then
-    chmod 775 ${err_file}
+    if [ ! -s ${err_file} ]
+    then
+        rm ${err_file}
+    else
+        chmod 775 ${err_file}
+    fi
 fi
 
 if [ ${exit_code} -eq ${expected_exit_code} ]
