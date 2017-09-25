@@ -34,10 +34,11 @@ chmod o+rx ${log_path_base}
 
 log_file="${log_path_base}/${log_file_base}-log.txt"
 
-LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
+# Various issues with this already existing in some accounts and not others, ssh conflicts depending on the environment.
+LD_LIBRARY_PATH2=.:${mcrRoot}/runtime/glnxa64 ;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
+LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
 cmd="${app} ${input_file1} ${input_file2} ${output_file}"
 
@@ -45,13 +46,13 @@ err_file="${log_path_base}/${log_file_base}.cluster.err"
 
 if [ ${is_cluster_job} -eq 0 ]
 then
-    export LD_LIBRARY_PATH;
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
 
     export MCR_CACHE_ROOT="~/";
 
     eval ${cmd} &> ${log_file}
 else
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-gd-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
 fi
 
 # Store before the next calls change the value.

@@ -37,6 +37,7 @@ chmod o+rx ${log_path_base}
 log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
 log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
 
+# Various issues with this already existing in some accounts and not others, ssh conflicts depending on the environment.
 LD_LIBRARY_PATH2=.:${mcrRoot}/runtime/glnxa64 ;
 LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
 LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
@@ -105,7 +106,7 @@ else
    # Channel 0
     err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
 
-    ssh login1 "echo \"ssh complete\"; source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
 
     exit_code=$?
 
