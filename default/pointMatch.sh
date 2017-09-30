@@ -14,7 +14,7 @@ expected_exit_code=${10}
 is_cluster_job=${11}
 
 # Custom task arguments defined by task definition
-app="${12}/pointMatch"
+app="${12}/pointmatch"
 mcrRoot=${13}
 
 # Compile derivatives
