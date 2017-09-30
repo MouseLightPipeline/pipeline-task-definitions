@@ -18,11 +18,13 @@ app="${12}/dogDescriptor"
 mcrRoot=${13}
 
 # Compile derivatives
-input_tile_1="${pipeline_input_root}/${tile_relative_path}"
-input_tile_2="${pipeline_input_root}/${z_minus_1_relative_path}"
+input_tile_1="${pipeline_input_root}/${z_minus_1_relative_path}"
+input_tile_2="${pipeline_input_root}/${tile_relative_path}"
 
-acq_folder_1="${project_root}/${tile_relative_path}"
-acq_folder_2="${project_root}/${z_minus_1_relative_path}"
+acq_folder_1="${project_root}/${z_minus_1_relative_path}"
+acq_folder_2="${project_root}/${tile_relative_path}"
+
+output_tile="${pipeline_output_root}/${tile_relative_path}"
 
 log_path_base="$pipeline_output_root/$tile_relative_path/.log"
 log_file_base="dd-${tile_name}"
@@ -44,7 +46,7 @@ LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
 LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
 LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
-cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${pipeline_output_root} ${expected_exit_code}"
+cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${output_tile} ${expected_exit_code}"
 
 if [ ${is_cluster_job} -eq 0 ]
 then
