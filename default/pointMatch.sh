@@ -27,7 +27,7 @@ acq_folder_2="${project_root}/${tile_relative_path}"
 output_tile="${pipeline_output_root}/${z_minus_1_relative_path}"
 
 log_path_base="$pipeline_output_root/${z_minus_1_relative_path}/.log"
-log_file_base="dd-${tile_name}"
+log_file_base="pm-${tile_name}"
 
 # Create hidden log folder
 mkdir -p ${log_path_base}
