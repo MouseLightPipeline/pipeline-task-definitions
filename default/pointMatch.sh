@@ -8,8 +8,8 @@ pipeline_output_root=$4
 tile_relative_path=$5
 tile_name=$6
 log_root_path=$7
-z_minus_1_relative_path=$8
-z_minus_1_tile_name=$9
+z_plus_1_relative_path=$8
+z_plus_1_tile_name=$9
 expected_exit_code=${10}
 is_cluster_job=${11}
 
@@ -18,15 +18,15 @@ app="${12}/pointmatch"
 mcrRoot=${13}
 
 # Compile derivatives
-input_tile_1="${pipeline_input_root}/${z_minus_1_relative_path}"
-input_tile_2="${pipeline_input_root}/${tile_relative_path}"
+input_tile_1="${pipeline_input_root}/${tile_relative_path}"
+input_tile_2="${pipeline_input_root}/${z_plus_1_relative_path}"
 
-acq_folder_1="${project_root}/${z_minus_1_relative_path}"
-acq_folder_2="${project_root}/${tile_relative_path}"
+acq_folder_1="${project_root}/${tile_relative_path}"
+acq_folder_2="${project_root}/${z_plus_1_relative_path}"
 
-output_tile="${pipeline_output_root}/${z_minus_1_relative_path}"
+output_tile="${pipeline_output_root}/${tile_relative_path}"
 
-log_path_base="$pipeline_output_root/${z_minus_1_relative_path}/.log"
+log_path_base="$pipeline_output_root/${tile_relative_path}/.log"
 log_file_base="pm-${tile_name}"
 
 # Create hidden log folder
