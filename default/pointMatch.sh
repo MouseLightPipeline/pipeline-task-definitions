@@ -77,7 +77,7 @@ else
    # Channel 0
     err_file="${log_path_base}/${log_file_base}.cluster.0.err"
 
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 1 -J ml-pm-${tile_name} -oo ${log_file_1} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
+    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 4 -J ml-pm-${tile_name} -oo ${log_file_1} -eo ${err_file} -cwd -R\"select[broadwell]\" ${cmd}"
 
     exit_code=$?
 
