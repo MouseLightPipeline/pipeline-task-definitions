@@ -13,7 +13,7 @@ worker_id=$9
 is_cluster_job=${10}
 
 # Custom task arguments defined by task definition
-ilastik_project="${10}/axon_uint16.ilp"
+ilastik_project="${11}/axon_uint16.ilp"
 
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.0.tif"
