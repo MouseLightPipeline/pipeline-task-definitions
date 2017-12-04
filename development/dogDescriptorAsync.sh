@@ -106,9 +106,11 @@ then
 
     exit ${exit_code}
 else
-    export_mcr_cache_root_cmd="if [ -d /scratch/\${USER} ]; then MCR_CACHE_ROOT=/scratch/\${USER}/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; else MCR_CACHE_ROOT=~/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; fi; mkdir \${MCR_CACHE_ROOT}"
+    export MCR_CACHE_ROOT="~/";
 
-    clean_mcr_cache_root_cmd="if [ -d \${MCR_CACHE_ROOT} ]; then rm -rf \${MCR_CACHE_ROOT}; fi"
+    # export_mcr_cache_root_cmd="if [ -d /scratch/\${USER} ]; then MCR_CACHE_ROOT=/scratch/\${USER}/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; else MCR_CACHE_ROOT=~/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; fi; mkdir \${MCR_CACHE_ROOT}"
+
+    # clean_mcr_cache_root_cmd="if [ -d \${MCR_CACHE_ROOT} ]; then rm -rf \${MCR_CACHE_ROOT}; fi"
 
     JOB_GROUP_NAME="/mouselight/${project_name}"
 
@@ -116,9 +118,9 @@ else
 
     log_file="${log_path_base}/${log_file_base}-log.txt"
 
-    cmd="${export_mcr_cache_root_cmd}; ${cmd1}; ${cmd2}; ${clean_mcr_cache_root_cmd}"
+    cmd="${cmd1}; ${cmd2};"
 
-    job_id=$(catch_jobid ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; bsub -n 3 -J ml-dg-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" -g ${JOB_GROUP_NAME} '${cmd}'")
+    job_id=$(catch_jobid ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -n 3 -J ml-dg-${tile_name} -oo ${log_file} -eo ${err_file} -cwd -R\"select[broadwell]\" -g ${JOB_GROUP_NAME} '${cmd}'")
 
     exit_code=${job_id}
 
