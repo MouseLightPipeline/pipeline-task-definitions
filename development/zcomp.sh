@@ -10,7 +10,8 @@ log_root_path=$7
 z_minus_1_relative_path=$8
 z_minus_1_tile_name=$9
 expected_exit_code=${10}
-is_cluster_job=${11}
+worker_id=${11}
+is_cluster_job=${12}
 
 echo $1
 echo $2

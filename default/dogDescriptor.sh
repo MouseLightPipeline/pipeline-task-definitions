@@ -9,11 +9,12 @@ tile_relative_path=$5
 tile_name=$6
 log_root_path=$7
 expected_exit_code=$8
-is_cluster_job=$9
+worker_id=$9
+is_cluster_job=${10}
 
 # Custom task arguments defined by task definition
-app="${10}/dogDescriptor"
-mcrRoot=${11}
+app="${11}/dogDescriptor"
+mcrRoot=${12}
 
 # Compile derivatives
 input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-prob.0.h5"

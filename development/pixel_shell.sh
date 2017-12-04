@@ -8,8 +8,9 @@ tile_relative_path=$5
 tile_name=$6
 log_root_path=$7
 expected_exit_code=$8
-is_cluster_job=$9
-ilastik_project="${10}/PixelTest.ilp"
+worker_id=$9
+is_cluster_job=${10}
+ilastik_project="${11}/PixelTest.ilp"
 
 echo ${log_root_path}
 echo ${expected_exit_code}

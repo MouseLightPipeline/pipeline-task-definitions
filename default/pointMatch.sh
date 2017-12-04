@@ -11,11 +11,12 @@ log_root_path=$7
 z_plus_1_relative_path=$8
 z_plus_1_tile_name=$9
 expected_exit_code=${10}
-is_cluster_job=${11}
+worker_id=${11}
+is_cluster_job=${12}
 
 # Custom task arguments defined by task definition
-app="${12}/pointmatch"
-mcrRoot=${13}
+app="${13}/pointmatch"
+mcrRoot=${14}
 
 # Compile derivatives
 input_tile_1="${pipeline_input_root}/${tile_relative_path}"
