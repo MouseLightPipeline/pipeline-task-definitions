@@ -108,7 +108,7 @@ then
 else
     export_mcr_cache_root_cmd="if [ -d /scratch/\${USER} ]; then MCR_CACHE_ROOT=/scratch/\${USER}/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; else MCR_CACHE_ROOT=~/mcr_cache_root.\${LSB_JOBID}.\${LSB_JOBINDEX}; fi; mkdir \${MCR_CACHE_ROOT}"
 
-    clean_mcr_cache_root_cmd=="if [ -d \${MCR_CACHE_ROOT} ]; then rm -rf \${MCR_CACHE_ROOT} fi"
+    clean_mcr_cache_root_cmd="if [ -d \${MCR_CACHE_ROOT} ]; then rm -rf \${MCR_CACHE_ROOT}; fi"
 
     JOB_GROUP_NAME="/mouselight/${project_name}"
 
