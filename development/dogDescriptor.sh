@@ -48,55 +48,54 @@ cmd1="${app} ${input_file1} ${output_file_1} \"[11 11 11]\" \"[3.405500 3.405500
 
 cmd2="${app} ${input_file2} ${output_file_2} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
 
-    export MCR_CACHE_ROOT="~/";
+export MCR_CACHE_ROOT="~/";
 
-    # Channel 0
-    eval ${cmd1} &> ${log_file_1}
+# Channel 0
+eval ${cmd1} &> ${log_file_1}
 
-    # Store before the next calls change the value.
-    exit_code=$?
+# Store before the next calls change the value.
+exit_code=$?
 
-    if [ -e ${output_file_1} ]
-    then
-        chmod 775 ${output_file_1}
-    fi
-
-    if [ -e ${log_file_1} ]
-    then
-        chmod 775 ${log_file_1}
-    fi
-
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel 0."
-    else
-      echo "Failed descriptor for channel 0."
-      exit ${exit_code}
-    fi
-
-    # Channel 1
-    eval ${cmd2} &> ${log_file_2}
-
-    exit_code=$?
-
-    if [ -e ${output_file_2} ]
-    then
-        chmod 775 ${output_file_2}
-    fi
-
-    if [ -e ${log_file_2} ]
-    then
-        chmod 775 ${log_file_2}
-    fi
-
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel 1."
-    else
-      echo "Failed descriptor for channel 1."
-    fi
-
-    exit ${exit_code}
+if [ -e ${output_file_1} ]
+then
+    chmod 775 ${output_file_1}
 fi
+
+if [ -e ${log_file_1} ]
+then
+    chmod 775 ${log_file_1}
+fi
+
+if [ ${exit_code} -eq ${expected_exit_code} ]
+then
+  echo "Completed descriptor for channel 0."
+else
+  echo "Failed descriptor for channel 0."
+  exit ${exit_code}
+fi
+
+# Channel 1
+eval ${cmd2} &> ${log_file_2}
+
+exit_code=$?
+
+if [ -e ${output_file_2} ]
+then
+    chmod 775 ${output_file_2}
+fi
+
+if [ -e ${log_file_2} ]
+then
+    chmod 775 ${log_file_2}
+fi
+
+if [ ${exit_code} -eq ${expected_exit_code} ]
+then
+  echo "Completed descriptor for channel 1."
+else
+  echo "Failed descriptor for channel 1."
+fi
+
+exit ${exit_code}
