@@ -22,7 +22,12 @@ output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
 output_file+="-prob"
 output_file1="$output_file.0.h5"
 output_file2="$output_file.1.h5"
-log_file="${11}/testing.log"
+
+log_file_1="${log_root_path}-ax-log.0.txt"
+log_file_2="${log_root_path}-ax-log.1.txt"
+
+echo ${log_file_1} &> "${pipeline_output_root}/test.txt"
+
 
 # Default location on test machines.  Most configurations should export IL_PREFIX in their launch script that also sets
 # machine id, etc.
@@ -52,10 +57,10 @@ export QT_PLUGIN_PATH=${IL_PREFIX}/plugins
 export LAZYFLOW_THREADS=2
 export LAZYFLOW_TOTAL_RAM_MB=600
 
-cmd1="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file1}\" --output_format=hdf5 \"${input_file1}\""
+cmd1="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file_1}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file1}\" --output_format=hdf5 \"${input_file1}\""
 echo "${cmd1}"
 
-cmd2="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file2}\" --output_format=hdf5 \"${input_file2}\""
+cmd2="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file_2}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file2}\" --output_format=hdf5 \"${input_file2}\""
 echo "${cmd2}"
 
 eval ${cmd1}

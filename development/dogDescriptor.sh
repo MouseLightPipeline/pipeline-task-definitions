@@ -25,32 +25,20 @@ output_file+="-desc"
 output_file_1="$output_file.0.txt"
 output_file_2="$output_file.1.txt"
 
-log_path_base="$pipeline_output_root/$tile_relative_path/.log"
-log_file_base="dd-${tile_name}"
-
-# Create hidden log folder
-mkdir -p ${log_path_base}
-
-# Make sure group can read/write.
-chmod ug+rwx ${log_path_base}
-chmod o+rx ${log_path_base}
-
-log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
-log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
+log_file_1="${log_root_path}.log.0.txt"
+log_file_2="${log_root_path}.log.1.txt"
 
 # Various issues with this already existing in some accounts and not others, ssh conflicts depending on the environment.
-LD_LIBRARY_PATH2=.:${mcrRoot}/runtime/glnxa64 ;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/opengl/lib/glnxa64;
+export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
+
+export MCR_CACHE_ROOT="~/";
 
 cmd1="${app} ${input_file1} ${output_file_1} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
 cmd2="${app} ${input_file2} ${output_file_2} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
-
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
-
-export MCR_CACHE_ROOT="~/";
 
 # Channel 0
 eval ${cmd1} &> ${log_file_1}
