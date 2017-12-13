@@ -9,7 +9,7 @@ tile_relative_path=$5
 tile_name=$6
 log_root_path=$7
 expected_exit_code=$8
-worker_id=$9
+task_id=$9
 is_cluster_job=${10}
 
 # Custom task arguments defined by task definition
@@ -35,12 +35,26 @@ perform_action () {
     fi
 }
 
+clean_mcr_cache_root() {
+    if [ -d ${MCR_CACHE_ROOT} ]
+    then
+        rm -rf ${MCR_CACHE_ROOT};
+    fi
+}
+
 export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
-export MCR_CACHE_ROOT="~/";
+if [ -d "/scratch/\${USER}" ]
+then
+    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}";
+else
+    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}";
+fi
+
+mkdir -p ${MCR_CACHE_ROOT}
 
 # Compile derivatives
 input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
@@ -52,12 +66,15 @@ do
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
-      echo "Completed descriptor for channel 0."
+      echo "Completed descriptor for channel ${idx}."
     else
-      echo "Failed descriptor for channel 0."
+      echo "Failed descriptor for channel ${idx}."
+      clean_mcrcacheroot;
       exit ${exit_code}
     fi
 done
+
+clean_mcrcacheroot;
 
 exit ${exit_code}
 

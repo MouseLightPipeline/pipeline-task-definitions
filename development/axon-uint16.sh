@@ -9,7 +9,7 @@ tile_relative_path=$5
 tile_name=$6
 log_root_path=$7
 expected_exit_code=$8
-worker_id=$9
+task_id=$9
 is_cluster_job=${10}
 
 # Custom task arguments defined by task definition

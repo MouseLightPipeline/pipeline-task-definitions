@@ -11,12 +11,19 @@ log_root_path=$7
 z_plus_1_relative_path=$8
 z_plus_1_tile_name=$9
 expected_exit_code=${10}
-worker_id=${11}
+task_id=${11}
 is_cluster_job=${12}
 
 # Custom task arguments defined by task definition
 app="${13}/pointmatch"
 mcrRoot=${14}
+
+clean_mcr_cache_root() {
+    if [ -d ${MCR_CACHE_ROOT} ]
+    then
+        rm -rf ${MCR_CACHE_ROOT};
+    fi
+}
 
 # Compile derivatives
 input_tile_1="${pipeline_input_root}/${tile_relative_path}"
@@ -32,7 +39,14 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
-export MCR_CACHE_ROOT="~/";
+if [ -d "/scratch/\${USER}" ]
+then
+    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}";
+else
+    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}";
+fi
+
+mkdir -p ${MCR_CACHE_ROOT}
 
 cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${output_tile} ${expected_exit_code}"
 
@@ -46,5 +60,7 @@ then
   echo "Completed pointMatch."
 else
   echo "Failed pointMatch."
-  exit ${exit_code}
 fi
+
+clean_mcrcacheroot;
+exit ${exit_code}
