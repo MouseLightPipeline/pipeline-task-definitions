@@ -48,12 +48,18 @@ export LD_LIBRARY_PATH=""
 export PYTHONPATH=""
 export QT_PLUGIN_PATH=${IL_PREFIX}/plugins
 
-export LAZYFLOW_THREADS=18
-export LAZYFLOW_TOTAL_RAM_MB=200000
+if [ ${is_cluster_job} -eq 0 ]
+then
+    export LAZYFLOW_THREADS=18
+    export LAZYFLOW_TOTAL_RAM_MB=200000
+else
+    export LAZYFLOW_THREADS=4
+    export LAZYFLOW_TOTAL_RAM_MB=30000
+fi
 
 # Compile derivatives
-input_file="${pipeline_input_root}/${tile_relative_path}/${tile_name}-ngc"
-output_file="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
+input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-ngc"
+output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
 
 for idx in `seq 0 1`;
 do
