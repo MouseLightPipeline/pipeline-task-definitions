@@ -62,7 +62,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
 for idx in `seq 0 1`;
 do
-    exit_code=$( perform_action 0 ${input_base} ${output_base} ${log_root_path} )
+    exit_code=$( perform_action ${idx} ${input_base} ${output_base} ${log_root_path} )
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
@@ -72,3 +72,6 @@ do
       exit ${exit_code}
     fi
 done
+
+exit ${exit_code}
+
