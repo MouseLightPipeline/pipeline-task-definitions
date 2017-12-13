@@ -22,7 +22,6 @@ exit_code=255
 perform_action () {
     input_file="${2}.${1}.h5"
     output_file="${3}.${1}.txt"
-    log_file="${4}.${1}.log"
 
     cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
     eval ${cmd}
@@ -33,11 +32,6 @@ perform_action () {
     if [ -e ${output_file} ]
     then
         chmod 775 ${output_file}
-    fi
-
-    if [ -e ${log_file} ]
-    then
-        chmod 775 ${log_file}
     fi
 }
 
