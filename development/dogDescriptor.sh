@@ -18,14 +18,14 @@ mcrRoot=${12}
 
 exit_code=255
 
-# args: channel index, input file base name, output file base name, log file name
+# args: channel index, input file base name, output file base name
 perform_action () {
     input_file="${2}.${1}.h5"
     output_file="${3}.${1}.txt"
     log_file="${4}.${1}.log"
 
     cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
-    eval ${cmd} # &> ${log_file}
+    eval ${cmd}
 
     # Store before the next calls change the value.
     exit_code=$?
@@ -54,7 +54,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
 for idx in `seq 0 1`;
 do
-    perform_action ${idx} ${input_base} ${output_base} ${log_root_path}
+    perform_action ${idx} ${input_base} ${output_base}
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
