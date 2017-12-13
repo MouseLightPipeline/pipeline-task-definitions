@@ -36,11 +36,6 @@ perform_action () {
     then
         chmod 775 ${output_file}
     fi
-
-    if [ -e ${log_file} ]
-    then
-        chmod 775 ${log_file}
-    fi
 }
 
 export LD_LIBRARY_PATH=""
@@ -62,7 +57,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
 
 for idx in `seq 0 1`;
 do
-    perform_action ${idx} ${input_base} ${output_base} ${log_root_path}
+    perform_action ${idx} ${input_base} ${output_base}
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
