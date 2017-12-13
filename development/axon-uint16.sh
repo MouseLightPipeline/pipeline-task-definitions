@@ -25,9 +25,8 @@ exit_code=255
 perform_action () {
     input_file="${2}.${1}.tif"
     output_file="${3}.${1}.h5"
-    log_file="${4}.${1}.log"
 
-    cmd="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --logfile=${log_file} --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file}\" --output_format=\"${output_format}\" \"$input_file\""
+    cmd="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file}\" --output_format=\"${output_format}\" \"$input_file\""
     eval ${cmd}
 
     # Store before the next calls change the value.
