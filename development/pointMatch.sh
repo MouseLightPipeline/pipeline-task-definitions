@@ -27,7 +27,7 @@ acq_folder_2="${project_root}/${z_plus_1_relative_path}"
 
 output_tile="${pipeline_output_root}/${tile_relative_path}"
 
-log_file="${log_root_path}.log.txt"
+log_file="${log_root_path}.log"
 
 export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;

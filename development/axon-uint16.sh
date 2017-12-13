@@ -24,8 +24,8 @@ output_file+="-prob"
 output_file_1="$output_file.0.h5"
 output_file_2="$output_file.1.h5"
 
-log_file_1="${log_root_path}.log.0.txt"
-log_file_2="${log_root_path}.log.1.txt"
+log_file_1="${log_root_path}.0.log"
+log_file_2="${log_root_path}.1.log"
 
 output_format="hdf5"
 
