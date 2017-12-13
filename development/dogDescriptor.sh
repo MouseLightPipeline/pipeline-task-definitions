@@ -16,19 +16,39 @@ is_cluster_job=${10}
 app="${11}/dogDescriptor"
 mcrRoot=${12}
 
-# Compile derivatives
-input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-prob.0.h5"
-input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-prob.1.h5"
+# args: channel index, input file base name, output file base name, log file name
+perform_action() {
+    input_file="${2}.${1}.h5"
+    output_file="${3}.${1}.txt"
+    log_file="${4}.${1}.log"
 
-output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
-output_file+="-desc"
-output_file_1="$output_file.0.txt"
-output_file_2="$output_file.1.txt"
+    cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
-log_file_1="${log_root_path}.log.0.txt"
-log_file_2="${log_root_path}.log.1.txt"
+    eval ${cmd} &> ${log_file}
 
-# Various issues with this already existing in some accounts and not others, ssh conflicts depending on the environment.
+    # Store before the next calls change the value.
+    exit_code=$?
+
+    if [ -e ${output_file} ]
+    then
+        chmod 775 ${output_file}
+    fi
+
+    if [ -e ${log_file} ]
+    then
+        chmod 775 ${log_file}
+    fi
+
+    if [ ${exit_code} -eq ${expected_exit_code} ]
+    then
+      echo "Completed descriptor for channel ${1}."
+    else
+      echo "Failed descriptor for channel ${1}."
+    fi
+
+    return ${exit_code}
+}
+
 export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
@@ -36,54 +56,19 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
 
 export MCR_CACHE_ROOT="~/";
 
-cmd1="${app} ${input_file1} ${output_file_1} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
+# Compile derivatives
+input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
+output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
-cmd2="${app} ${input_file2} ${output_file_2} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
+for idx in `seq 0 1`;
+do
+    exit_code=$( perform_action 0 ${input_base} ${output_base} ${log_root_path} )
 
-# Channel 0
-eval ${cmd1} &> ${log_file_1}
-
-# Store before the next calls change the value.
-exit_code=$?
-
-if [ -e ${output_file_1} ]
-then
-    chmod 775 ${output_file_1}
-fi
-
-if [ -e ${log_file_1} ]
-then
-    chmod 775 ${log_file_1}
-fi
-
-if [ ${exit_code} -eq ${expected_exit_code} ]
-then
-  echo "Completed descriptor for channel 0."
-else
-  echo "Failed descriptor for channel 0."
-  exit ${exit_code}
-fi
-
-# Channel 1
-eval ${cmd2} &> ${log_file_2}
-
-exit_code=$?
-
-if [ -e ${output_file_2} ]
-then
-    chmod 775 ${output_file_2}
-fi
-
-if [ -e ${log_file_2} ]
-then
-    chmod 775 ${log_file_2}
-fi
-
-if [ ${exit_code} -eq ${expected_exit_code} ]
-then
-  echo "Completed descriptor for channel 1."
-else
-  echo "Failed descriptor for channel 1."
-fi
-
-exit ${exit_code}
+    if [ ${exit_code} -eq ${expected_exit_code} ]
+    then
+      echo "Completed descriptor for channel 0."
+    else
+      echo "Failed descriptor for channel 0."
+      exit ${exit_code}
+    fi
+done
