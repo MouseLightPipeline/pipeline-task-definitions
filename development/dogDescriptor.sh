@@ -24,7 +24,7 @@ perform_action() {
 
     cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
 
-    eval ${cmd} &> ${log_file}
+    eval ${cmd} # &> ${log_file}
 
     # Store before the next calls change the value.
     exit_code=$?
