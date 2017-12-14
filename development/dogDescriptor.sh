@@ -69,12 +69,12 @@ do
       echo "Completed descriptor for channel ${idx}."
     else
       echo "Failed descriptor for channel ${idx}."
-      clean_mcrcacheroot;
+      clean_mcr_cache_root
       exit ${exit_code}
     fi
 done
 
-clean_mcrcacheroot;
+clean_mcr_cache_root;
 
 exit ${exit_code}
 

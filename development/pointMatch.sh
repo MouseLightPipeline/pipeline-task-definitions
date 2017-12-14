@@ -62,5 +62,5 @@ else
   echo "Failed pointMatch."
 fi
 
-clean_mcrcacheroot;
+clean_mcr_cache_root;
 exit ${exit_code}
