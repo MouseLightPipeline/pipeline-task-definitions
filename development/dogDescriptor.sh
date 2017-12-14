@@ -35,23 +35,23 @@ perform_action () {
     fi
 }
 
-clean_mcr_cache_root() {
+clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
     then
-        rm -rf ${MCR_CACHE_ROOT};
+        rm -rf ${MCR_CACHE_ROOT}
     fi
 }
 
-export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
+export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64
 
 if [ -d "/scratch/\${USER}" ]
 then
-    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}";
+    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}";
+    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
@@ -60,7 +60,7 @@ mkdir -p ${MCR_CACHE_ROOT}
 input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
 output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
-for idx in `seq 0 1`;
+for idx in `seq 0 1`
 do
     perform_action ${idx} ${input_base} ${output_base}
 
@@ -74,7 +74,7 @@ do
     fi
 done
 
-clean_mcr_cache_root;
+clean_mcr_cache_root
 
 exit ${exit_code}
 

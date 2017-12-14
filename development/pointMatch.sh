@@ -18,10 +18,10 @@ is_cluster_job=${12}
 app="${13}/pointmatch"
 mcrRoot=${14}
 
-clean_mcr_cache_root() {
+clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
     then
-        rm -rf ${MCR_CACHE_ROOT};
+        rm -rf ${MCR_CACHE_ROOT}
     fi
 }
 
@@ -34,16 +34,16 @@ acq_folder_2="${project_root}/${z_plus_1_relative_path}"
 
 output_tile="${pipeline_output_root}/${tile_relative_path}"
 
-export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64 ;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64 ;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64;
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64;
+export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64
 
 if [ -d "/scratch/\${USER}" ]
 then
-    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}";
+    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}";
+    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
@@ -62,5 +62,5 @@ else
   echo "Failed pointMatch."
 fi
 
-clean_mcr_cache_root;
+clean_mcr_cache_root
 exit ${exit_code}

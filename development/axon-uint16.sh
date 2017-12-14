@@ -55,7 +55,7 @@ fi
 input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-ngc"
 output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
 
-for idx in `seq 0 1`;
+for idx in `seq 0 1`
 do
     perform_action ${idx} ${input_base} ${output_base}
 
