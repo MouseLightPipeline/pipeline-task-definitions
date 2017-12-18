@@ -39,11 +39,11 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64
 
-if [ -d "/scratch/\${USER}" ]
+if [ -d "/scratch/${USER}" ]
 then
-    export MCR_CACHE_ROOT="/scratch/\${USER}/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="~/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
