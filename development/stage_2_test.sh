@@ -15,5 +15,11 @@ adjacent_tile_name=$9
 expected_exit_code=${10}
 task_id=${11}
 is_cluster_job=${12}
+x=${13}
+y=${14}
+z=${15}
+step_x=${16}
+step_y=${17}
+step_z=${18}
 
-node ${PWD}/scripts/stage_2.js ${project_name} ${project_root} ${pipeline_input_root} ${pipeline_output_root} ${tile_relative_path} ${tile_name} ${log_root_path} ${adjacent_relative_path} ${adjacent_tile_name} ${expected_exit_code} ${task_id} ${is_cluster_job} 
+node ${PWD}/scripts/stage_2.js ${pipeline_input_root} ${pipeline_output_root} ${tile_relative_path} ${tile_name} ${project_name} ${project_root} ${log_root_path} ${adjacent_relative_path} ${adjacent_tile_name} ${expected_exit_code} ${task_id} ${is_cluster_job} ${x} ${y} ${z} ${step_x} ${step_y} ${step_z}

@@ -1,181 +1,81 @@
 #!/usr/bin/env bash
 
 # Standard arguments passed to all tasks.
-project_name=$1
-project_root=$2
-pipeline_input_root=$3
-pipeline_output_root=$4
-tile_relative_path=$5
-tile_name=$6
-log_root_path=$7
-expected_exit_code=$8
-worker_id=$9
-is_cluster_job=${10}
+pipeline_input_root=${1}
+pipeline_output_root=${2}
+tile_relative_path=${3}
+tile_name=${4}
 
-# Custom task arguments defined by task definition
-app="${11}/dogDescriptor"
-mcrRoot=${12}
 
-# Compile derivatives
-input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-prob.0.h5"
-input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-prob.1.h5"
+# User-defined arguments
+expected_exit_code=${5}
+task_id=${6}
+app="${7}/dogDescriptor"
+mcrRoot=${8}
 
-output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
-output_file+="-desc"
-output_file_1="$output_file.0.txt"
-output_file_2="$output_file.1.txt"
+exit_code=255
 
-log_path_base="$pipeline_output_root/$tile_relative_path/.log"
-log_file_base="dd-${tile_name}"
+# args: channel index, input file base name, output file base name
+perform_action () {
+    input_file="${2}.${1}.h5"
+    output_file="${3}.${1}.txt"
 
-# Create hidden log folder
-mkdir -p ${log_path_base}
-
-# Make sure group can read/write.
-chmod ug+rwx ${log_path_base}
-chmod o+rx ${log_path_base}
-
-log_file_1="${log_path_base}/${log_file_base}-log.0.txt"
-log_file_2="${log_path_base}/${log_file_base}-log.1.txt"
-
-# Various issues with this already existing in some accounts and not others, ssh conflicts depending on the environment.
-LD_LIBRARY_PATH2=.:${mcrRoot}/runtime/glnxa64 ;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/bin/glnxa64 ;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/os/glnxa64;
-LD_LIBRARY_PATH2=${LD_LIBRARY_PATH2}:${mcrRoot}/sys/opengl/lib/glnxa64;
-
-cmd1="${app} ${input_file1} ${output_file_1} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
-
-cmd2="${app} ${input_file2} ${output_file_2} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
-
-if [ ${is_cluster_job} -eq 0 ]
-then
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2};
-
-    export MCR_CACHE_ROOT="~/";
-
-    # Channel 0
-    eval ${cmd1} &> ${log_file_1}
+    cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
+    eval ${cmd}
 
     # Store before the next calls change the value.
     exit_code=$?
 
-    if [ -e ${output_file_1} ]
+    if [ -e ${output_file} ]
     then
-        chmod 775 ${output_file_1}
+        chmod 775 ${output_file}
     fi
+}
 
-    if [ -e ${log_file_1} ]
+clean_mcr_cache_root () {
+    echo "Clearing cache at ${MCR_CACHE_ROOT}"
+
+    if [ -d ${MCR_CACHE_ROOT} ]
     then
-        chmod 775 ${log_file_1}
+        echo "Found mcr cache root directory"
+        rm -rf ${MCR_CACHE_ROOT}
+        echo $?
     fi
+}
 
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel 0."
-    else
-      echo "Failed descriptor for channel 0."
-      exit ${exit_code}
-    fi
+export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/os/glnxa64
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/sys/opengl/lib/glnxa64
 
-    # Channel 1
-    eval ${cmd2} &> ${log_file_2}
-
-    exit_code=$?
-
-    if [ -e ${output_file_2} ]
-    then
-        chmod 775 ${output_file_2}
-    fi
-
-    if [ -e ${log_file_2} ]
-    then
-        chmod 775 ${log_file_2}
-    fi
-
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel 1."
-    else
-      echo "Failed descriptor for channel 1."
-    fi
-
-    exit ${exit_code}
+if [ -d "/scratch/${USER}" ]
+then
+    export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="~/";
+    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
+fi
 
-   # Channel 0
-    err_file_1="${log_path_base}/${log_file_base}.cluster.0.err"
+mkdir -p ${MCR_CACHE_ROOT}
 
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 3 -J ml-dg-${tile_name} -oo ${log_file_1} -eo ${err_file_1} -cwd -R\"select[broadwell]\" ${cmd1}"
+# Compile derivatives
+input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
+output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
-    exit_code=$?
-
-    sleep 2s
-
-    if [ -e ${output_file_1} ]
-    then
-        chmod 775 ${output_file_1}
-    fi
-
-    if [ -e ${log_file_1} ]
-    then
-        chmod 775 ${log_file_1}
-    fi
-
-    if [ -e ${err_file_1} ]
-    then
-        if [ ! -s ${err_file_1} ]
-        then
-            rm ${err_file_1}
-        else
-            chmod 775 ${err_file_1}
-        fi
-    fi
+for idx in `seq 0 1`
+do
+    perform_action ${idx} ${input_base} ${output_base}
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then
-      echo "Completed descriptor for channel 0 (cluster)."
+      echo "Completed descriptor for channel ${idx}."
     else
-      echo "Failed descriptor for channel 0 (cluster)."
+      echo "Failed descriptor for channel ${idx}."
+      clean_mcr_cache_root
       exit ${exit_code}
     fi
+done
+echo "Attempting to clear cache at ${MCR_CACHE_ROOT}"
+clean_mcr_cache_root
 
-   # Channel 1
-    err_file_2="${log_path_base}/${log_file_base}.cluster.1.err"
+exit ${exit_code}
 
-    ssh login1 "source /etc/profile; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH2}; export MCR_CACHE_ROOT=${MCR_CACHE_ROOT}; bsub -K -n 3 -J ml-dg-${tile_name} -oo ${log_file_2} -eo ${err_file_2} -cwd -R\"select[broadwell]\" ${cmd2}"
-
-    exit_code=$?
-
-    sleep 2s
-
-    if [ -e ${output_file_2} ]
-    then
-        chmod 775 ${output_file_2}
-    fi
-
-    if [ -e ${log_file_2} ]
-    then
-        chmod 775 ${log_file_2}
-    fi
-
-    if [ -e ${err_file_2} ]
-    then
-        if [ ! -s ${err_file_2} ]
-        then
-            rm ${err_file_2}
-        else
-            chmod 775 ${err_file_2}
-        fi
-    fi
-
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel 1 (cluster)."
-    else
-      echo "Failed descriptor for channel 1 (cluster)."
-    fi
-
-    exit ${exit_code}
-fi
