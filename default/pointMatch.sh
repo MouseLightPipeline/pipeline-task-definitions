@@ -15,12 +15,12 @@ task_id=${8}
 app="${9}/pointmatch"
 mcrRoot=${10}
 
-if [ "$#" -gt 14 ]; then
+if [ "$#" -gt 10 ]; then
 	pixshift=${11}
 	ch=${12}
 	maxnumofdesc=${13}
 else
-	pixshift='[0 0 0]'
+	pixshift='[0,0,0]'
 	ch=1
 	maxnumofdesc=10000
 fi
