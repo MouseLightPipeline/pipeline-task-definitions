@@ -63,7 +63,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
 for idx in `seq 0 1`
 do
-    perform_action ${idx} ${input_base} ${output_base}
+    perform_action ${idx} "${input_base}" "${output_base}"
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then

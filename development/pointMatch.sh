@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
 
 # Standard arguments passed to all tasks.
-project_name=$1
-project_root=$2
-pipeline_input_root=$3
-pipeline_output_root=$4
-tile_relative_path=$5
-tile_name=$6
-log_root_path=$7
-z_plus_1_relative_path=$8
-z_plus_1_tile_name=$9
-expected_exit_code=${10}
-task_id=${11}
-is_cluster_job=${12}
+pipeline_input_root=${1}
+pipeline_output_root=${2}
+tile_relative_path=${3}
+tile_name=${4}
 
+# User-defined arguments
+project_root=${5}
+z_plus_1_relative_path=${6}
+expected_exit_code=${7}
+task_id=${8}
 # Custom task arguments defined by task definition
-app="${13}/pointmatch"
-mcrRoot=${14}
+app="${9}/pointmatch"
+mcrRoot=${10}
+
+if [ "$#" -gt 10 ]; then
+	pixshift=${11}
+	ch=${12}
+	maxnumofdesc=${13}
+else
+	pixshift='[0,0,0]'
+	ch=1
+	maxnumofdesc=10000
+fi
 
 clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]

@@ -9,7 +9,7 @@ tile_name=${4}
 # User-defined arguments
 expected_exit_code=${5}
 is_cluster_job=${6}
-ilastik_project="${7}/axon_uint16.ilp"
+ilastik_project=${7}
 
 IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/cluster/software/ilastik-1.1.9-Linux
 
@@ -40,8 +40,14 @@ export QT_PLUGIN_PATH=${IL_PREFIX}/plugins
 
 if [ ${is_cluster_job} -eq 0 ]
 then
-    export LAZYFLOW_THREADS=18
-    export LAZYFLOW_TOTAL_RAM_MB=200000
+    if [ -z ${PIPELINE_TEST_MACHINE} ]
+    then
+        export LAZYFLOW_THREADS=1
+        export LAZYFLOW_TOTAL_RAM_MB=600
+    else
+        export LAZYFLOW_THREADS=18
+        export LAZYFLOW_TOTAL_RAM_MB=200000
+    fi
 else
     export LAZYFLOW_THREADS=4
     export LAZYFLOW_TOTAL_RAM_MB=30000
@@ -53,7 +59,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
 
 for idx in `seq 0 1`
 do
-    perform_action ${idx} ${input_base} ${output_base}
+    perform_action ${idx} "${input_base}" "${output_base}"
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then

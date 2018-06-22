@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
 
 # Standard arguments passed to all tasks.
-project_name=$1
-project_root=$2
-pipeline_input_root=$3
-pipeline_output_root=$4
-tile_relative_path=$5
-tile_name=$6
-log_root_path=$7
-expected_exit_code=$8
-task_id=$9
-is_cluster_job=${10}
+pipeline_input_root=${1}
+pipeline_output_root=${2}
+tile_relative_path=${3}
+tile_name=${4}
 
-# Custom task arguments defined by task definition
-app="${11}/dogDescriptor"
-mcrRoot=${12}
+
+# User-defined arguments
+expected_exit_code=${5}
+task_id=${6}
+app="${7}/dogDescriptor"
+mcrRoot=${8}
 
 exit_code=255
 

@@ -25,7 +25,6 @@ else
 	maxnumofdesc=10000
 fi
 
-
 clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
     then
@@ -56,8 +55,7 @@ fi
 
 mkdir -p ${MCR_CACHE_ROOT}
 
-# cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${output_tile} ${expected_exit_code}"
-cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${output_tile} ${pixshift} ${ch} ${maxnumofdesc} ${expected_exit_code}"
+cmd="${app} "${input_tile_1}" "${input_tile_2}" "${acq_folder_1}" "${acq_folder_2}" "${output_tile}" ${pixshift} ${ch} ${maxnumofdesc} ${expected_exit_code}"
 echo ${cmd}
 eval ${cmd}
 

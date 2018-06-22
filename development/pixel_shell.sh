@@ -1,30 +1,17 @@
 #!/usr/bin/env bash
 
-project_name=$1
-project_root=$2
-pipeline_input_root=$3
-pipeline_output_root=$4
-tile_relative_path=$5
-tile_name=$6
-log_root_path=$7
-expected_exit_code=$8
-worker_id=$9
-is_cluster_job=${10}
-ilastik_project="${11}/PixelTest.ilp"
 
-echo ${log_root_path}
-echo ${expected_exit_code}
-echo ${ilastik_project}
+# Standard arguments passed to all tasks.
+pipeline_input_root=${1}
+pipeline_output_root=${2}
+tile_relative_path=${3}
+tile_name=${4}
 
-input_file1="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.0.tif"
-input_file2="$pipeline_input_root/$tile_relative_path/$tile_name-ngc.1.tif"
-output_file="$pipeline_output_root/$tile_relative_path/$tile_name"
-output_file+="-prob"
-output_file1="$output_file.0.h5"
-output_file2="$output_file.1.h5"
+# User-defined arguments
+expected_exit_code=${5}
+is_cluster_job=${6}
+ilastik_project="${7}/PixelTest.ilp"
 
-log_file_1="${log_root_path}.0.log"
-log_file_2="${log_root_path}.0.log"
 
 # Default location on test machines.  Most configurations should export IL_PREFIX in their launch script that also sets
 # machine id, etc.
@@ -34,53 +21,60 @@ then
   then
     IL_PREFIX=/Volumes/Spare/Projects/MouseLight/Classifier/ilastik/ilastik-1.1.8-OSX.app/Contents/ilastik-release
   else
-    IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/Software/ilastik-1.1.8.post1-Linux
+    IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/Software/ilastik-1.1.9-Linux
   fi
 fi
 
-# Comments and execution based on iLastik's default run script.
+output_format="hdf5"
 
-# Do not use the user's previous LD_LIBRARY_PATH settings because they can cause conflicts.
-# Start with an empty LD_LIBRARY_PATH
+exit_code=255
+
+# args: channel index, input file base name, output file base name
+perform_action () {
+    input_file="${2}.${1}.tif"
+    output_file="${3}.${1}.h5"
+
+    echo ${input_file}
+    echo ${output_file}
+
+    cmd="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --cutout_subregion=\"[(None,None,None,0),(None,None,None,1)]\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file}\" --output_format=\"${output_format}\" \"$input_file\""
+    eval ${cmd}
+
+    # Store before the next calls change the value.
+    exit_code=$?
+
+    if [ -e ${output_file} ]
+    then
+        chmod 775 ${output_file}
+    fi
+}
+
 export LD_LIBRARY_PATH=""
-
-# Similarly, clear PYTHONPATH
 export PYTHONPATH=""
-
-# Do not use the user's own QT_PLUGIN_PATH, which can cause conflicts with our QT build.
-# This is especially important on KDE, which is uses its own version of QT and may conflict.
 export QT_PLUGIN_PATH=${IL_PREFIX}/plugins
+
 
 export LAZYFLOW_THREADS=2
 export LAZYFLOW_TOTAL_RAM_MB=600
 
-cmd1="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file_1}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file1}\" --output_format=hdf5 \"${input_file1}\""
-echo "${cmd1}"
+# Compile derivatives
+input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-ngc"
+output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-prob"
 
-cmd2="${IL_PREFIX}/bin/python ${IL_PREFIX}/ilastik-meta/ilastik/ilastik.py --headless --logfile=\"${log_file_2}\" --project=\"${ilastik_project}\" --output_filename_format=\"${output_file2}\" --output_format=hdf5 \"${input_file2}\""
-echo "${cmd2}"
+echo ${input_base}
+echo ${output_base}
 
-eval ${cmd1}
+for idx in `seq 0 1`
+do
+    perform_action ${idx} "${input_base}" "${output_base}"
 
-result=$?
+    if [ ${exit_code} -eq ${expected_exit_code} ]
+    then
+      echo "Completed classifier for channel 0."
+    else
+      echo "Failed classifier for channel 0."
+      exit ${exit_code}
+    fi
+done
 
-if [ ${result} -eq ${expected_exit_code} ]
-then
-  echo "Completed classifier for channel 0."
-else
-  echo "Failed classifier for channel 0."
-  exit ${result}
-fi
-
-eval ${cmd2}
-
-result=$?
-
-if [ ${result} -eq ${expected_exit_code} ]
-then
-  echo "Completed classifier for channel 1."
-  exit 0
-else
-  echo "Failed classifier for channel 1."
-  exit ${result}
-fi
+exit ${exit_code}
