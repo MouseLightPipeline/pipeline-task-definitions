@@ -40,7 +40,7 @@ export QT_PLUGIN_PATH=${IL_PREFIX}/plugins
 
 if [ ${is_cluster_job} -eq 0 ]
 then
-    if [ -z ${PIPELINE_TEST_MACHINE} ]
+    if [ ! -z ${PIPELINE_TEST_MACHINE} ]
     then
         export LAZYFLOW_THREADS=1
         export LAZYFLOW_TOTAL_RAM_MB=600
