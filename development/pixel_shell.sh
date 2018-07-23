@@ -21,7 +21,7 @@ then
   then
     IL_PREFIX=/Volumes/Spare/Projects/MouseLight/Classifier/ilastik/ilastik-1.1.8-OSX.app/Contents/ilastik-release
   else
-    IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/Software/ilastik-1.1.9-Linux
+    IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/cluster/software/ilastik-1.1.9-Linux
   fi
 fi
 
