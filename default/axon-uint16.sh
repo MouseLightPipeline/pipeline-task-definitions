@@ -50,7 +50,7 @@ then
     fi
 else
     export LAZYFLOW_THREADS=4
-    export LAZYFLOW_TOTAL_RAM_MB=30000
+    export LAZYFLOW_TOTAL_RAM_MB=60000
 fi
 
 # Compile derivatives
