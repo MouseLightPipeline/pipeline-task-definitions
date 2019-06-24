@@ -11,7 +11,7 @@ tile_name=${4}
 expected_exit_code=${5}
 task_id=${6}
 config_file=${7}
-app="${8}/vesselDescriptor"
+app="${8}/skelDescriptor"
 mcrRoot=${9}
 
 exit_code=255
@@ -19,7 +19,7 @@ exit_code=255
 # args: channel index, input file base name, output file base name
 perform_action () {
     input_file="${2}.${1}.tif"
-    output_file="${3}.${1}.mat"
+    output_file="${3}.${1}.txt"
 
     cmd="${app} ${input_file} ${output_file} ${config_file}"
     eval ${cmd}
