@@ -10,8 +10,7 @@ tile_name=${4}
 expected_exit_code=${5}
 is_cluster_job=${6}
 ilastik_project=${7}
-
-IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/cluster/software/ilastik-1.1.9-Linux
+IL_PREFIX=${8}
 
 output_format="hdf5"
 

@@ -14,6 +14,7 @@ task_id=${8}
 # Custom task arguments defined by task definition
 app="${9}/pointmatch_vessel"
 mcrRoot=${10}
+scratchRoot=${11}
 
 if [ "$#" -gt 10 ]; then
 	pixshift=${11}
@@ -50,7 +51,7 @@ if [ -d "/scratch/${USER}" ]
 then
     export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="${scratchRoot}/${USER}/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}

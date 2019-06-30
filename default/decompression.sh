@@ -12,6 +12,7 @@ expected_exit_code=${5}
 task_id=${6}
 app="${7}/dogDescriptor"
 mcrRoot=${8}
+scratchRoot=${9}
 
 exit_code=255
 
@@ -52,7 +53,7 @@ if [ -d "/scratch/${USER}" ]
 then
     export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="${scratchRoot}/${USER}/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
