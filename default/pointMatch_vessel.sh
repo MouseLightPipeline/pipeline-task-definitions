@@ -12,8 +12,9 @@ z_plus_1_relative_path=${6}
 expected_exit_code=${7}
 task_id=${8}
 # Custom task arguments defined by task definition
-app="${9}/pointmatch"
+app="${9}/pointmatch_vessel"
 mcrRoot=${10}
+scratchRoot=${11}
 
 if [ "$#" -gt 10 ]; then
 	pixshift=${11}
@@ -50,13 +51,13 @@ if [ -d "/scratch/${USER}" ]
 then
     export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="${scratchRoot}/${USER}/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
 
-cmd="${app} ${input_tile_1} ${input_tile_2} ${acq_folder_1} ${acq_folder_2} ${output_tile} ${expected_exit_code}"
-
+cmd="${app} "${input_tile_1}" "${input_tile_2}" "${acq_folder_1}" "${acq_folder_2}" "${output_tile}" ${pixshift} ${ch} ${maxnumofdesc} ${expected_exit_code}"
+echo ${cmd}
 eval ${cmd}
 
 # Store before the next calls change the value.

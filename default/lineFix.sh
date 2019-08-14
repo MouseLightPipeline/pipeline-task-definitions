@@ -8,14 +8,13 @@ tile_name=${4}
 
 # User-defined arguments
 app="${5}/lineFix.py"
+pythonFolder=${6}
 
 exit_code=255
 
 # Compile derivatives
 input_file="${pipeline_input_root}/${tile_relative_path}"
 output_file="${pipeline_output_root}/${tile_relative_path}"
-
-pythonFolder=/groups/mousebrainmicro/home/base/anaconda3/
 
 cmd="${pythonFolder}/bin/python ${app} -i ${input_file} -o ${output_file}"
 echo ${cmd}

@@ -10,18 +10,19 @@ tile_name=${4}
 # User-defined arguments
 expected_exit_code=${5}
 task_id=${6}
-app="${7}/dogDescriptor"
-mcrRoot=${8}
-scratchRoot=${9}
+config_file=${7}
+app="${8}/vesselDescriptor"
+mcrRoot=${9}
+scratchRoot=${10}
 
 exit_code=255
 
 # args: channel index, input file base name, output file base name
 perform_action () {
-    input_file="${2}.${1}.h5"
-    output_file="${3}.${1}.txt"
+    input_file="${2}.${1}.tif"
+    output_file="${3}.${1}.mat"
 
-    cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
+    cmd="${app} ${input_file} ${output_file} ${config_file}"
     eval ${cmd}
 
     # Store before the next calls change the value.
@@ -30,7 +31,7 @@ perform_action () {
     if [ -e ${output_file} ]
     then
         chmod 775 ${output_file}
-    fi
+    f
 }
 
 clean_mcr_cache_root () {
@@ -59,10 +60,11 @@ fi
 mkdir -p ${MCR_CACHE_ROOT}
 
 # Compile derivatives
-input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
+input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-ngc"
 output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
-for idx in `seq 0 1`
+# for idx in `seq 0 1`
+for idx in {0..0}
 do
     perform_action ${idx} "${input_base}" "${output_base}"
 
@@ -79,4 +81,3 @@ echo "Attempting to clear cache at ${MCR_CACHE_ROOT}"
 clean_mcr_cache_root
 
 exit ${exit_code}
-

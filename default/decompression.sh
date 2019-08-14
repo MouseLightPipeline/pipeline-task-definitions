@@ -12,6 +12,7 @@ expected_exit_code=${5}
 task_id=${6}
 app="${7}/dogDescriptor"
 mcrRoot=${8}
+scratchRoot=${9}
 
 exit_code=255
 
@@ -38,7 +39,7 @@ clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
     then
         echo "Found mcr cache root directory"
-        rm -rf $MCR_CACHE_ROOT
+        rm -rf ${MCR_CACHE_ROOT}
         echo $?
     fi
 }
@@ -52,7 +53,7 @@ if [ -d "/scratch/${USER}" ]
 then
     export MCR_CACHE_ROOT="/scratch/${USER}/mcr_cache_root.${task_id}"
 else
-    export MCR_CACHE_ROOT="/groups/mousebrainmicro/home/${USER}/mcr_cache_root.${task_id}"
+    export MCR_CACHE_ROOT="${scratchRoot}/${USER}/mcr_cache_root.${task_id}"
 fi
 
 mkdir -p ${MCR_CACHE_ROOT}
@@ -63,7 +64,7 @@ output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
 
 for idx in `seq 0 1`
 do
-    perform_action ${idx} ${input_base} ${output_base}
+    perform_action ${idx} "${input_base}" "${output_base}"
 
     if [ ${exit_code} -eq ${expected_exit_code} ]
     then

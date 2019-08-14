@@ -6,25 +6,20 @@ pipeline_output_root=${2}
 tile_relative_path=${3}
 tile_name=${4}
 
-# User-defined arguments
-project_root=${5}
-z_plus_1_relative_path=${6}
-expected_exit_code=${7}
-task_id=${8}
-# Custom task arguments defined by task definition
-app="${9}/pointmatch"
-mcrRoot=${10}
-scratchRoot=${11}
+# User-defined system arguments
+sx=${5}
+sy=${6}
+sz=${7}
+ex=${8}
+ey=${8}
+ez=${10}
 
-if [ "$#" -gt 11 ]; then
-	pixshift=${12}
-	ch=${13}
-	maxnumofdesc=${14}
-else
-	pixshift='[0,0,0]'
-	ch=1
-	maxnumofdesc=10000
-fi
+# Custom task arguments defined by task definition
+app=${11}
+datafile=${12}
+dataset=${13}
+configFile=${14}
+scratchRoot=${15}
 
 clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
@@ -34,13 +29,9 @@ clean_mcr_cache_root () {
 }
 
 # Compile derivatives
-input_tile_1="${pipeline_input_root}/${tile_relative_path}"
-input_tile_2="${pipeline_input_root}/${z_plus_1_relative_path}"
+inputRange="[${sx},${sy},${sz},${ex},${ey},${ez}]"
 
-acq_folder_1="${project_root}/${tile_relative_path}"
-acq_folder_2="${project_root}/${z_plus_1_relative_path}"
-
-output_tile="${pipeline_output_root}/${tile_relative_path}"
+output_tile="${pipeline_output_root}/lev-6_chunk-111_111_masked-0_idx-${tile_name}_stxyzendxyz-${sx}_${sy}_${sz}_${ex}_${ey}_${ez}.txt"
 
 export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
@@ -56,18 +47,22 @@ fi
 
 mkdir -p ${MCR_CACHE_ROOT}
 
-cmd="${app} "${input_tile_1}" "${input_tile_2}" "${acq_folder_1}" "${acq_folder_2}" "${output_tile}" ${pixshift} ${ch} ${maxnumofdesc} ${expected_exit_code}"
+cmd="${app} ${datafile} ${dataset} \"${inputRange}\" ${output_tile} ${configFile}"
 echo ${cmd}
-eval ${cmd}
+
+sleep 15
+
+touch ${output_tile}
+# eval ${cmd}
 
 # Store before the next calls change the value.
 exit_code=$?
 
-if [ ${exit_code} -eq ${expected_exit_code} ]
+if [ ${exit_code} -eq 0 ]
 then
-  echo "Completed pointMatch."
+  echo "Completed clusterSkel."
 else
-  echo "Failed pointMatch."
+  echo "Failed clusterSkel."
 fi
 
 clean_mcr_cache_root

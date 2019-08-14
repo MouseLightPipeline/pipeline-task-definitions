@@ -10,32 +10,17 @@ tile_name=${4}
 # User-defined arguments
 expected_exit_code=${5}
 task_id=${6}
-app="${7}/dogDescriptor"
+app=${7}
+# app="${7}/compression"
 mcrRoot=${8}
-scratchRoot=${9}
+compression_lvl=${9}
+delete_file=${10}
+scratchRoot=${11}
 
 exit_code=255
 
-# args: channel index, input file base name, output file base name
-perform_action () {
-    input_file="${2}.${1}.h5"
-    output_file="${3}.${1}.txt"
-
-    cmd="${app} ${input_file} ${output_file} \"[11 11 11]\" \"[3.405500 3.405500 3.405500]\" \"[4.049845 4.049845 4.049845]\" \"[5 1019 5 1531 5 250]\" 4"
-    eval ${cmd}
-
-    # Store before the next calls change the value.
-    exit_code=$?
-
-    if [ -e ${output_file} ]
-    then
-        chmod 775 ${output_file}
-    fi
-}
-
 clean_mcr_cache_root () {
     echo "Clearing cache at ${MCR_CACHE_ROOT}"
-
     if [ -d ${MCR_CACHE_ROOT} ]
     then
         echo "Found mcr cache root directory"
@@ -59,24 +44,21 @@ fi
 mkdir -p ${MCR_CACHE_ROOT}
 
 # Compile derivatives
-input_base="${pipeline_input_root}/${tile_relative_path}/${tile_name}-prob"
-output_base="${pipeline_output_root}/${tile_relative_path}/${tile_name}-desc"
+input_base="${pipeline_input_root}/${tile_relative_path}"
+output_base="${pipeline_output_root}/${tile_relative_path}"
 
-for idx in `seq 0 1`
-do
-    perform_action ${idx} "${input_base}" "${output_base}"
+cmd="${app} ${input_base} ${output_base} ${compression_lvl} ${delete_file}"
+echo ${cmd}
+eval ${cmd}
 
-    if [ ${exit_code} -eq ${expected_exit_code} ]
-    then
-      echo "Completed descriptor for channel ${idx}."
-    else
-      echo "Failed descriptor for channel ${idx}."
-      clean_mcr_cache_root
-      exit ${exit_code}
-    fi
-done
+# Store before the next calls change the value.
+exit_code=$?
+
+if [ -e ${output_file} ]
+then
+    chmod 775 ${output_file}
+fi
+
 echo "Attempting to clear cache at ${MCR_CACHE_ROOT}"
 clean_mcr_cache_root
-
 exit ${exit_code}
-

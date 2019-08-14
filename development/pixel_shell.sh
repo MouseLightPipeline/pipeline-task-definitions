@@ -9,21 +9,8 @@ tile_name=${4}
 
 # User-defined arguments
 expected_exit_code=${5}
-is_cluster_job=${6}
-ilastik_project="${7}/PixelTest.ilp"
-
-
-# Default location on test machines.  Most configurations should export IL_PREFIX in their launch script that also sets
-# machine id, etc.
-if [ -z "$IL_PREFIX" ]
-then
-  if [ "$(uname)" == "Darwin" ]
-  then
-    IL_PREFIX=/Volumes/Spare/Projects/MouseLight/Classifier/ilastik/ilastik-1.1.8-OSX.app/Contents/ilastik-release
-  else
-    IL_PREFIX=/groups/mousebrainmicro/mousebrainmicro/Software/ilastik-1.1.9-Linux
-  fi
-fi
+ilastik_project="${6}/PixelTest.ilp"
+IL_PREFIX=${7}
 
 output_format="hdf5"
 
