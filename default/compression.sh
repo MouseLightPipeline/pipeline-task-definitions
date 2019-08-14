@@ -11,7 +11,6 @@ tile_name=${4}
 expected_exit_code=${5}
 task_id=${6}
 app=${7}
-# app="${7}/compression"
 mcrRoot=${8}
 compression_lvl=${9}
 delete_file=${10}
