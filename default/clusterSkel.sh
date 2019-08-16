@@ -11,15 +11,16 @@ sx=${5}
 sy=${6}
 sz=${7}
 ex=${8}
-ey=${8}
+ey=${9}
 ez=${10}
 
 # Custom task arguments defined by task definition
-app=${11}
-datafile=${12}
-dataset=${13}
-configFile=${14}
-scratchRoot=${15}
+datafile=${11}
+dataset=${12}
+configFile=${13}
+app=${14}
+mcrRoot=${15}
+scratchRoot=${16}
 
 clean_mcr_cache_root () {
     if [ -d ${MCR_CACHE_ROOT} ]
@@ -31,7 +32,7 @@ clean_mcr_cache_root () {
 # Compile derivatives
 inputRange="[${sx},${sy},${sz},${ex},${ey},${ez}]"
 
-output_tile="${pipeline_output_root}/lev-6_chunk-111_111_masked-0_idx-${tile_name}_stxyzendxyz-${sx}_${sy}_${sz}_${ex}_${ey}_${ez}.txt"
+output_tile="${pipeline_output_root}/${tile_relative_path}/lev-6_chunk-111_111_masked-0_idx-${tile_name}_stxyzendxyz-${sx}_${sy}_${sz}_${ex}_${ey}_${ez}.txt"
 
 export LD_LIBRARY_PATH=.:${mcrRoot}/runtime/glnxa64
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${mcrRoot}/bin/glnxa64
@@ -50,10 +51,10 @@ mkdir -p ${MCR_CACHE_ROOT}
 cmd="${app} ${datafile} ${dataset} \"${inputRange}\" ${output_tile} ${configFile}"
 echo ${cmd}
 
-sleep 15
+# sleep 15
+# touch ${output_tile}
 
-touch ${output_tile}
-# eval ${cmd}
+eval ${cmd}
 
 # Store before the next calls change the value.
 exit_code=$?
