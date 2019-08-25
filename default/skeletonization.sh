@@ -63,7 +63,7 @@ exit_code=$?
 
 if [ ${exit_code} -eq 0 ]
 then
-  echo "Completed clusterSkel."
+  echo "Completed skeletonization."
 else
   echo "Failed clusterSkel."
 fi
