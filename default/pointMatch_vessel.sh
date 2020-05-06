@@ -16,10 +16,10 @@ app="${9}/pointmatch_vessel"
 mcrRoot=${10}
 scratchRoot=${11}
 
-if [ "$#" -gt 10 ]; then
-	pixshift=${11}
-	ch=${12}
-	maxnumofdesc=${13}
+if [ "$#" -gt 11 ]; then
+	pixshift=${12}
+	ch=${13}
+	maxnumofdesc=${14}
 else
 	pixshift='[0,0,0]'
 	ch=1

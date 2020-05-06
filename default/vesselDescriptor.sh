@@ -31,7 +31,7 @@ perform_action () {
     if [ -e ${output_file} ]
     then
         chmod 775 ${output_file}
-    f
+    fi
 }
 
 clean_mcr_cache_root () {
